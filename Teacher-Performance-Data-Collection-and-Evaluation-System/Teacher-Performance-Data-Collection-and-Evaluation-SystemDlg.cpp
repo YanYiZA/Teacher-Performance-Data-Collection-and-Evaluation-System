@@ -59,12 +59,15 @@ CTeacherPerformanceDataCollectionandEvaluationSystemDlg::CTeacherPerformanceData
 void CTeacherPerformanceDataCollectionandEvaluationSystemDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_LIST_DATA, m_listData);
 }
 
 BEGIN_MESSAGE_MAP(CTeacherPerformanceDataCollectionandEvaluationSystemDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_BN_CLICKED(IDC_BUTTON1, &CTeacherPerformanceDataCollectionandEvaluationSystemDlg::OnBnClickedButton1)
+	ON_BN_CLICKED(IDC_BUTTON_ADD, &CTeacherPerformanceDataCollectionandEvaluationSystemDlg::OnBnClickedButtonAdd)
 END_MESSAGE_MAP()
 
 
@@ -100,6 +103,24 @@ BOOL CTeacherPerformanceDataCollectionandEvaluationSystemDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// 设置小图标
 
 	// TODO: 在此添加额外的初始化代码
+	CListCtrl& listCtrl = m_listData; // 假设 m_listData 是你绑定的 CListCtrl 对象
+	listCtrl.SetExtendedStyle(LVS_EX_FULLROWSELECT | LVS_EX_GRIDLINES); // 开启全行选择和网格线
+
+	// 设置列头
+	CStringArray columns;
+	columns.Add(_T("姓名"));
+	columns.Add(_T("类型"));
+	columns.Add(_T("绩效依据"));
+	columns.Add(_T("教学绩效"));
+	columns.Add(_T("科研绩效"));
+	columns.Add(_T("其他绩效"));
+	columns.Add(_T("总绩效"));
+	columns.Add(_T("绩效排名"));
+
+	for (int i = 0; i < columns.GetCount(); ++i)
+	{
+		listCtrl.InsertColumn(i, columns[i], LVCFMT_LEFT, 100); // 每列宽度 100
+	}
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }
@@ -153,3 +174,23 @@ HCURSOR CTeacherPerformanceDataCollectionandEvaluationSystemDlg::OnQueryDragIcon
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+
+
+void CTeacherPerformanceDataCollectionandEvaluationSystemDlg::OnBnClickedButton1()
+{
+	// TODO: 在此添加控件通知处理程序代码
+}
+
+//增加数据
+void CTeacherPerformanceDataCollectionandEvaluationSystemDlg::OnBnClickedButtonAdd()
+{
+	// TODO: 在此添加控件通知处理程序代码
+	// 从编辑框获取输入内容
+	CString name, type, basis, teaching, research, other;
+	m_editName.GetWindowText(name);
+	m_editType.GetWindowText(type);
+	m_editBasis.GetWindowText(basis);
+	m_editTeaching.GetWindowText(teaching);
+	m_editResearch.GetWindowText(research);
+	m_editOther.GetWindowText(other);
+}
