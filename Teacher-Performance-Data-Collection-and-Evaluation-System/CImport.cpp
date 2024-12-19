@@ -87,12 +87,10 @@ void CImport::ImportDocxFiles(const std::vector<std::wstring>& filePaths)
                         teachingWork += std::stod(performance);
                     }
                     catch (const std::invalid_argument&) {
-                        // 如果转换失败，将绩效设置为 0
-                        teachingWork += 0;
+                        teachingWork += 0; // 如果转换失败，将绩效设置为 0
                     }
                     catch (const std::out_of_range&) {
-                        // 如果转换失败，将绩效设置为 0
-                        teachingWork += 0;
+                        teachingWork += 0; // 如果转换失败，将绩效设置为 0
                     }
                 }
                 else if (workType == L"教研工作") {
@@ -150,13 +148,20 @@ void CImport::AddDataToList(const std::wstring& name, double teachingWork, doubl
 {
     int index = m_pListCtrl->InsertItem(0, CString(name.c_str()));
 
-    // 将绩效数据汇总并显示
-    std::wstring teachingWorkStr = std::to_wstring(teachingWork);
-    m_pListCtrl->SetItemText(index, 1, CString(teachingWorkStr.c_str()));
+    // 格式化为两位小数，并添加到控件中
+    auto formatDouble = [](double value) -> CString {
+        // 将 double 转为字符串并保留两位小数
+        std::wostringstream oss;
+        oss.precision(2);
+        oss << std::fixed << value;
+        return CString(oss.str().c_str());
+        };
 
-    m_pListCtrl->SetItemText(index, 2, CString(std::to_wstring(researchWork).c_str()));
-    m_pListCtrl->SetItemText(index, 3, CString(std::to_wstring(scientificWork).c_str()));
-    m_pListCtrl->SetItemText(index, 4, CString(std::to_wstring(otherWork).c_str()));
+    // 将绩效数据汇总并显示
+    m_pListCtrl->SetItemText(index, 1, formatDouble(teachingWork));
+    m_pListCtrl->SetItemText(index, 2, formatDouble(researchWork));
+    m_pListCtrl->SetItemText(index, 3, formatDouble(scientificWork));
+    m_pListCtrl->SetItemText(index, 4, formatDouble(otherWork));
 
     // 填充总绩效（这里暂时为0）和绩效排名（也填0）
     m_pListCtrl->SetItemText(index, 5, L"0");
