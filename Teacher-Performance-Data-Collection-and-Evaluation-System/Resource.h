@@ -8,6 +8,7 @@
 #define IDD_TEACHERPERFORMANCEDATACOLLECTIONANDEVALUATIONSYSTEM_DIALOG 102
 #define IDR_MAINFRAME                   128
 #define IDC_BUTTON1                     1000
+#define IDC_BUTTON_IMPORT               1000
 #define IDC_EDIT1                       1001
 #define IDC_LIST_DATA                   1002
 #define IDC_BUTTON2                     1003

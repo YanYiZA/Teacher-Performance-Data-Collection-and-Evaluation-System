@@ -78,7 +78,6 @@ BEGIN_MESSAGE_MAP(CTeacherPerformanceDataCollectionandEvaluationSystemDlg, CDial
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(IDC_BUTTON1, &CTeacherPerformanceDataCollectionandEvaluationSystemDlg::OnBnClickedButton1)
 	ON_BN_CLICKED(IDC_BUTTON_ADD, &CTeacherPerformanceDataCollectionandEvaluationSystemDlg::OnBnClickedButtonAdd)
 	ON_BN_CLICKED(IDC_BUTTON_SORT, &CTeacherPerformanceDataCollectionandEvaluationSystemDlg::OnBnClickedButtonSort)
 	ON_BN_CLICKED(IDC_BUTTON_DELETE, &CTeacherPerformanceDataCollectionandEvaluationSystemDlg::OnBnClickedButtonDelete)
@@ -86,6 +85,7 @@ BEGIN_MESSAGE_MAP(CTeacherPerformanceDataCollectionandEvaluationSystemDlg, CDial
 	//ON_EN_CHANGE(IDC_EDIT10, &CTeacherPerformanceDataCollectionandEvaluationSystemDlg::OnEnChangeEdit10)
 	ON_BN_CLICKED(IDC_BUTTON_TOTAL, &CTeacherPerformanceDataCollectionandEvaluationSystemDlg::OnBnClickedButtonTotal)
 	ON_BN_CLICKED(IDC_BUTTON_SEARCH, &CTeacherPerformanceDataCollectionandEvaluationSystemDlg::OnBnClickedButtonSearch)
+	ON_BN_CLICKED(IDC_BUTTON_IMPORT, &CTeacherPerformanceDataCollectionandEvaluationSystemDlg::OnBnClickedButtonImport)
 END_MESSAGE_MAP()
 
 
@@ -196,10 +196,10 @@ HCURSOR CTeacherPerformanceDataCollectionandEvaluationSystemDlg::OnQueryDragIcon
 
 
 //导入文件
-void CTeacherPerformanceDataCollectionandEvaluationSystemDlg::OnBnClickedButton1()
-{
+//void CTeacherPerformanceDataCollectionandEvaluationSystemDlg::OnBnClickedButton1()
+//{
 	// TODO: 在此添加控件通知处理程序代码
-}
+//}
 
 //增加数据
 void CTeacherPerformanceDataCollectionandEvaluationSystemDlg::OnBnClickedButtonAdd()
@@ -486,4 +486,27 @@ void CTeacherPerformanceDataCollectionandEvaluationSystemDlg::UpdateRankings()
 	AfxMessageBox(_T("Reached TRACE Section"));
 	// 更新列表控件显示
 	UpdateListCtrl();
+}
+
+void CTeacherPerformanceDataCollectionandEvaluationSystemDlg::OnBnClickedButtonImport()
+{
+	// 创建文件选择器，设置为允许多选
+	CFileDialog dlg(TRUE, _T("docx"), NULL, OFN_FILEMUSTEXIST | OFN_ALLOWMULTISELECT, _T("Word 文件 (*.docx)|*.docx||"), this);
+
+	if (dlg.DoModal() == IDOK)
+	{
+		// 获取用户选择的文件路径
+		POSITION pos = dlg.GetStartPosition();
+		std::vector<std::wstring> filePaths;
+
+		while (pos)
+		{
+			CString filePath = dlg.GetNextPathName(pos);
+			filePaths.push_back(filePath.GetString());
+		}
+
+		// 创建 CImport 对象并调用 ImportData 方法导入数据
+		CImport importer(&m_listData);  // 将 ListCtrl 作为引用传递
+		importer.ImportData(filePaths); // 批量导入选中的文件
+	}
 }
