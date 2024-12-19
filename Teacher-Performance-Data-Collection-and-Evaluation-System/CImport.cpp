@@ -31,8 +31,10 @@ void CImport::ImportDocxFiles(const std::vector<std::wstring>& filePaths)
         // 开始处理函数
         for (const auto& filePath : filePaths)
         {
-            // 调用 Python 脚本并获取返回的文本数据
-            std::wstring command = L"python parse_docx.py \"" + filePath + L"\"";
+            // 使用 pythonw 来运行脚本，这样可以避免弹出命令行窗口
+            std::wstring command = L"python parse_docx.pyw \"" + filePath + L"\"";
+
+            // 创建进程
             FILE* pipe = _wpopen(command.c_str(), L"r");
             if (pipe == nullptr) {
                 AfxMessageBox(L"无法运行 Python 脚本！");
@@ -143,6 +145,7 @@ void CImport::ImportDocxFiles(const std::vector<std::wstring>& filePaths)
 }
 
 
+
 // 将数据添加到 List 控件
 void CImport::AddDataToList(const std::wstring& name, double teachingWork, double researchWork, double scientificWork, double otherWork)
 {
@@ -164,6 +167,6 @@ void CImport::AddDataToList(const std::wstring& name, double teachingWork, doubl
     m_pListCtrl->SetItemText(index, 4, formatDouble(otherWork));
 
     // 填充总绩效（这里暂时为0）和绩效排名（也填0）
-    m_pListCtrl->SetItemText(index, 5, L"0");
-    m_pListCtrl->SetItemText(index, 6, L"0");
+    m_pListCtrl->SetItemText(index, 5, L"");
+    m_pListCtrl->SetItemText(index, 6, L"");
 }
