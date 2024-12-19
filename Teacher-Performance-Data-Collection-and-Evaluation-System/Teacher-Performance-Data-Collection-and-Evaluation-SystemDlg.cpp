@@ -490,23 +490,21 @@ void CTeacherPerformanceDataCollectionandEvaluationSystemDlg::UpdateRankings()
 
 void CTeacherPerformanceDataCollectionandEvaluationSystemDlg::OnBnClickedButtonImport()
 {
-	// 创建文件选择器，设置为允许多选
-	CFileDialog dlg(TRUE, _T("docx"), NULL, OFN_FILEMUSTEXIST | OFN_ALLOWMULTISELECT, _T("Word 文件 (*.docx)|*.docx||"), this);
-
+	CFileDialog dlg(TRUE, L"docx", nullptr, OFN_FILEMUSTEXIST | OFN_ALLOWMULTISELECT, L"Word Documents (*.docx)|*.docx||");
 	if (dlg.DoModal() == IDOK)
 	{
-		// 获取用户选择的文件路径
+		// 获取选中的文件路径
 		POSITION pos = dlg.GetStartPosition();
 		std::vector<std::wstring> filePaths;
 
-		while (pos)
+		while (pos != nullptr)
 		{
-			CString filePath = dlg.GetNextPathName(pos);
-			filePaths.push_back(filePath.GetString());
+			CString path = dlg.GetNextPathName(pos);
+			filePaths.push_back(path.GetString());
 		}
 
-		// 创建 CImport 对象并调用 ImportData 方法导入数据
-		CImport importer(&m_listData);  // 将 ListCtrl 作为引用传递
-		importer.ImportData(filePaths); // 批量导入选中的文件
+		// 创建 CImport 实例，传递 ListCtrl 控件
+		CImport import(&m_listData);
+		import.ImportDocxFiles(filePaths);  // 调用导入函数
 	}
 }

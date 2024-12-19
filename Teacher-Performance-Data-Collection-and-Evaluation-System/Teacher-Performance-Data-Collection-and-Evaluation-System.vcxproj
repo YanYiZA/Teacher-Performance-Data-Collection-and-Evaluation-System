@@ -209,6 +209,7 @@
     <ResourceCompile Include="TeacherPerformanceDataCollectionandEvaluationSystem.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="parse_docx.py" />
     <None Include="res\TeacherPerformanceDataCollectionandEvaluationSystem.rc2" />
   </ItemGroup>
   <ItemGroup>

@@ -36,6 +36,9 @@
     <ClInclude Include="CRankingManager.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="CImport.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Teacher-Performance-Data-Collection-and-Evaluation-System.cpp">
@@ -50,6 +53,9 @@
     <ClCompile Include="CRankingManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="CImport.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="TeacherPerformanceDataCollectionandEvaluationSystem.rc">
@@ -60,6 +66,7 @@
     <None Include="res\TeacherPerformanceDataCollectionandEvaluationSystem.rc2">
       <Filter>资源文件</Filter>
     </None>
+    <None Include="parse_docx.py" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\Teacher-Performance-Data-Collection-and-Evaluation-System.ico">

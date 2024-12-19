@@ -1,17 +1,27 @@
 #pragma once
+
 #include <afxwin.h>
 #include <vector>
 #include <string>
 
+// CImport 类负责从 DOCX 文件导入数据并填充到列表控件中
 class CImport
 {
 public:
+    // 构造函数与析构函数
     CImport(CListCtrl* pListCtrl);
     ~CImport();
 
-    void ImportData(const std::vector<std::wstring>& filePaths); // 批量导入文件的接口
+    // 导入多个 DOCX 文件
+    void ImportDocxFiles(const std::vector<std::wstring>& filePaths);
+
+    // 向 ListCtrl 中添加数据
+    void AddDataToList(const std::wstring& name, double teachingWork, double researchWork, double scientificWork, double otherWork);
 
 private:
-    CListCtrl* m_pListCtrl; // 用于操作 List 控件
-    void AddDataToList(const std::wstring& name, int teaching, int research, int other, int total); // 添加数据到List控件
+    // ListCtrl 控件的指针，保存导入数据
+    CListCtrl* m_pListCtrl;
+
+    // 辅助函数，用于初始化 ListCtrl 控件的列
+    void InitializeListCtrl();
 };
