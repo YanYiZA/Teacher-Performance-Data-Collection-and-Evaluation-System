@@ -212,7 +212,7 @@
     <ResourceCompile Include="TeacherPerformanceDataCollectionandEvaluationSystem.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="export_data.pyw" />
+    <None Include="export_data.py" />
     <None Include="parse_docx.pyw" />
     <None Include="res\TeacherPerformanceDataCollectionandEvaluationSystem.rc2" />
   </ItemGroup>

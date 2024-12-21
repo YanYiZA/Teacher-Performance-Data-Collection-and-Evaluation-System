@@ -538,99 +538,78 @@ void CTeacherPerformanceDataCollectionandEvaluationSystemDlg::OnBnClickedButtonI
 
 void CTeacherPerformanceDataCollectionandEvaluationSystemDlg::OnBnClickedButtonExportExcel()
 {
-	// 弹出文件保存对话框
-	CFileDialog fileDlg(FALSE, L"*.xlsx", NULL, OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST, L"Excel Files (*.xlsx)|*.xlsx||", this);
-	if (fileDlg.DoModal() == IDOK) {
-		CString filePath = fileDlg.GetPathName();  // 获取用户选择的文件路径
+	// 创建 CExport 对象并调用导出函数
+    CExport exportObj(&m_listData);  // 将 CListCtrl 控件传递给 CExport 对象
+    exportObj.ExportDataToFile();  // 导出数据到 data.txt
 
-		// 获取列表数据
-		int nItemCount = m_listData.GetItemCount();
-		int nColumnCount = m_listData.GetHeaderCtrl()->GetItemCount();  // 获取列数
+    // 打开文件选择对话框，让用户选择保存 Excel 文件的路径
+    CFileDialog fileDialog(FALSE, L"excel", L"*.xlsx", OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT,
+        L"Excel Files (*.xlsx)|*.xlsx|All Files (*.*)|*.*||");
 
-		std::vector<std::vector<std::wstring>> data;
+    if (fileDialog.DoModal() == IDOK)
+    {
+        // 获取用户选择的路径
+        std::wstring savePath = fileDialog.GetPathName();
 
-		// 获取列标题（作为表头）
-		std::vector<std::wstring> headers;
-		for (int col = 0; col < nColumnCount; ++col) {
-			LVCOLUMNW column;
-			column.mask = LVCF_TEXT;  // 获取文本信息
-			CString headerText;
-			column.pszText = headerText.GetBuffer(256);  // 为列标题分配缓冲区
-			m_listData.GetColumn(col, &column);  // 获取列信息
-			headers.push_back(column.pszText);  // 将列标题添加到 headers
-		}
-		data.push_back(headers);
+        // 调用 Python 脚本生成 Excel 文件
+        std::wstring pythonScriptPath = L"export_data.py";  // 你的 Python 脚本路径
+        std::wstring command = L"python " + pythonScriptPath + L" excel " + savePath;
 
-		// 获取每行数据
-		for (int row = 0; row < nItemCount; ++row) {
-			std::vector<std::wstring> rowData;
-			for (int col = 0; col < nColumnCount; ++col) {
-				CString cellText = m_listData.GetItemText(row, col);
-				rowData.push_back(cellText.GetString());
-			}
-			data.push_back(rowData);
-		}
+        // 使用 CreateProcess 调用 Python 脚本
+        STARTUPINFO si = { sizeof(si) };
+        PROCESS_INFORMATION pi;
+        ZeroMemory(&pi, sizeof(pi));
 
-		// 调用 CExport 类的导出函数，将数据导出到用户选择的文件
-		bool exportSuccess = CExport::ExportDataToFile(data, filePath.GetString(), L"Excel");
+        if (CreateProcess(nullptr, &command[0], nullptr, nullptr, FALSE, 0, nullptr, nullptr, &si, &pi) == 0)
+        {
+            AfxMessageBox(L"Failed to start Python script!");
+        }
+        else
+        {
+            WaitForSingleObject(pi.hProcess, INFINITE);
+            CloseHandle(pi.hProcess);
+            CloseHandle(pi.hThread);
 
-		// 弹出提示框
-		if (exportSuccess) {
-			AfxMessageBox(L"Excel 文件导出成功！", MB_OK | MB_ICONINFORMATION);
-		}
-		else {
-			AfxMessageBox(L"导出失败，发生错误！", MB_OK | MB_ICONERROR);
-		}
-	}
+            AfxMessageBox(L"Python script executed successfully!");
+        }
+    }
 }
-
-
-
 
 void CTeacherPerformanceDataCollectionandEvaluationSystemDlg::OnBnClickedButtonExportWord()
 {
-	// 弹出文件保存对话框
-	CFileDialog fileDlg(FALSE, L"*.docx", NULL, OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST, L"Word Files (*.docx)|*.docx||", this);
-	if (fileDlg.DoModal() == IDOK) {
-		CString filePath = fileDlg.GetPathName();  // 获取用户选择的文件路径
+	// 创建 CExport 对象并调用导出函数
+	CExport exportObj(&m_listData);  // 将 CListCtrl 控件传递给 CExport 对象
+	exportObj.ExportDataToFile();  // 导出数据到 data.txt
 
-		// 获取列表数据
-		int nItemCount = m_listData.GetItemCount();
-		int nColumnCount = m_listData.GetHeaderCtrl()->GetItemCount();  // 获取列数
+	// 打开文件选择对话框，让用户选择保存 Word 文件的路径
+	CFileDialog fileDialog(FALSE, L"word", L"*.docx", OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT,
+		L"Word Files (*.docx)|*.docx|All Files (*.*)|*.*||");
 
-		std::vector<std::vector<std::wstring>> data;
+	if (fileDialog.DoModal() == IDOK)
+	{
+		// 获取用户选择的路径
+		std::wstring savePath = fileDialog.GetPathName();
 
-		// 获取列标题（作为表头）
-		std::vector<std::wstring> headers;
-		for (int col = 0; col < nColumnCount; ++col) {
-			LVCOLUMNW column;
-			column.mask = LVCF_TEXT;  // 获取文本信息
-			CString headerText;
-			column.pszText = headerText.GetBuffer(256);  // 为列标题分配缓冲区
-			m_listData.GetColumn(col, &column);  // 获取列信息
-			headers.push_back(column.pszText);  // 将列标题添加到 headers
+		// 调用 Python 脚本生成 Word 文件
+		std::wstring pythonScriptPath = L"export_data.py";  // 你的 Python 脚本路径
+		std::wstring command = L"python " + pythonScriptPath + L" word " + savePath;
+
+		// 使用 CreateProcess 调用 Python 脚本
+		STARTUPINFO si = { sizeof(si) };
+		PROCESS_INFORMATION pi;
+		ZeroMemory(&pi, sizeof(pi));
+
+		if (CreateProcess(nullptr, &command[0], nullptr, nullptr, FALSE, 0, nullptr, nullptr, &si, &pi) == 0)
+		{
+			AfxMessageBox(L"Failed to start Python script!");
 		}
-		data.push_back(headers);
+		else
+		{
+			WaitForSingleObject(pi.hProcess, INFINITE);
+			CloseHandle(pi.hProcess);
+			CloseHandle(pi.hThread);
 
-		// 获取每行数据
-		for (int row = 0; row < nItemCount; ++row) {
-			std::vector<std::wstring> rowData;
-			for (int col = 0; col < nColumnCount; ++col) {
-				CString cellText = m_listData.GetItemText(row, col);
-				rowData.push_back(cellText.GetString());
-			}
-			data.push_back(rowData);
-		}
-
-		// 调用 CExport 类的导出函数，将数据导出到用户选择的文件
-		bool exportSuccess = CExport::ExportDataToFile(data, filePath.GetString(), L"Word");
-
-		// 弹出提示框
-		if (exportSuccess) {
-			AfxMessageBox(L"Word 文件导出成功！", MB_OK | MB_ICONINFORMATION);
-		}
-		else {
-			AfxMessageBox(L"导出失败，发生错误！", MB_OK | MB_ICONERROR);
+			AfxMessageBox(L"Python script executed successfully!");
 		}
 	}
 }
