@@ -1,70 +1,69 @@
-// CExport.cpp
 #include "pch.h"
 #include "CExport.h"
+#include <afx.h>
+#include <afxdlgs.h>  // 引入 MFC 文件对话框相关头文件
 #include <fstream>
-#include <sstream>
-#include <stdio.h>
+#include <string>
+#include <Windows.h>
 
-void CExport::ExportToExcel(const std::vector<std::vector<std::wstring>>& data, const std::wstring& fileName)
+CExport::CExport(CListCtrl* pListCtrl)
+    : m_pListData(pListCtrl)  // 构造函数接受 CListCtrl 控件指针
 {
-    // 启动 Python 脚本导出数据到 Excel 文件
-    std::wstring command = L"python export_data.py excel ";
-    FILE* pipe = _wpopen(command.c_str(), L"w");
-
-    if (pipe != nullptr)
-    {
-        for (const auto& row : data)
-        {
-            for (const auto& cell : row)
-            {
-                fprintf(pipe, "%s,", std::string(cell.begin(), cell.end()).c_str());
-            }
-            fprintf(pipe, "\n");
-        }
-        fclose(pipe);
-    }
-    else
-    {
-        AfxMessageBox(L"无法启动 Python 脚本！");
-    }
 }
 
-void CExport::ExportToWord(const std::vector<std::vector<std::wstring>>& data, const std::wstring& fileName)
+// 实际导出数据到文件的函数
+void CExport::ExportDataToFile()
 {
-    // 启动 Python 脚本导出数据到 Word 文件
-    std::wstring command = L"python export_data.py word ";
-    FILE* pipe = _wpopen(command.c_str(), L"w");
+    // 设置固定的文件路径，保存在项目根目录
+    CString filePath = _T("data.txt");
 
-    if (pipe != nullptr)
+    // 打开文件进行写入，使用 std::ofstream (写入文本文件)
+    std::ofstream file_out(filePath, std::ios::out | std::ios::binary);
+
+    if (!file_out.is_open())
     {
-        for (const auto& row : data)
+        AfxMessageBox(L"Failed to open the file for writing");
+        return;
+    }
+
+    // 写入 UTF-8 BOM（字节顺序标记）
+    unsigned char BOM[] = { 0xEF, 0xBB, 0xBF }; // UTF-8 BOM
+    file_out.write(reinterpret_cast<char*>(BOM), sizeof(BOM));
+
+    // 获取 CListCtrl 数据
+    int nItemCount = m_pListData->GetItemCount();  // 获取项目数
+    int nColumnCount = m_pListData->GetHeaderCtrl()->GetItemCount();  // 获取列数
+
+    // 如果没有数据，弹出提示并返回
+    if (nItemCount == 0 || nColumnCount == 0)
+    {
+        AfxMessageBox(L"No data to export");
+        return;
+    }
+
+    // 开始导出数据
+    for (int row = 0; row < nItemCount; ++row)
+    {
+        for (int col = 0; col < nColumnCount; ++col)
         {
-            for (const auto& cell : row)
-            {
-                fprintf(pipe, "%s,", std::string(cell.begin(), cell.end()).c_str());
-            }
-            fprintf(pipe, "\n");
-        }
-        fclose(pipe);
-    }
-    else
-    {
-        AfxMessageBox(L"无法启动 Python 脚本！");
-    }
-}
+            CString cellText = m_pListData->GetItemText(row, col);  // 获取每个单元格的文本
 
-void CExport::ExportDataToFile(const std::vector<std::vector<std::wstring>>& data, const std::wstring& format)
-{
-    if (format == L"Excel")
-    {
-        ExportToExcel(data, L"output.xlsx");
+            // 使用 WideCharToMultiByte 转换 CString（宽字符）为 UTF-8 字符串
+            int bufferSize = WideCharToMultiByte(CP_UTF8, 0, cellText, -1, nullptr, 0, nullptr, nullptr);
+            char* utf8Buffer = new char[bufferSize];
+            WideCharToMultiByte(CP_UTF8, 0, cellText, -1, utf8Buffer, bufferSize, nullptr, nullptr);
+
+            // 将 UTF-8 字符串写入文件
+            file_out.write(utf8Buffer, bufferSize - 1); // 去掉字符串末尾的 null 字符
+            file_out << "\t";  // 使用制表符分隔单元格数据
+            delete[] utf8Buffer;
+        }
+        file_out << std::endl;  // 每一行结束后换行
     }
-    else if (format == L"Word")
-    {
-        ExportToWord(data, L"output.docx");
-    }
-    else
-    {
-        AfxMessageBox(L"未知的文件格式！");
-    }
+
+    // 关闭文件
+    file_out.close();
+
+    // 提示导出完成
+    AfxMessageBox(L"Data export completed successfully!");
 }

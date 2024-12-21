@@ -76,7 +76,7 @@
       <Filter>资源文件</Filter>
     </None>
     <None Include="parse_docx.pyw" />
-    <None Include="export_data.pyw" />
+    <None Include="export_data.py" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\Teacher-Performance-Data-Collection-and-Evaluation-System.ico">
