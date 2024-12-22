@@ -3,6 +3,9 @@ import sys
 import os
 from openpyxl import Workbook
 from docx import Document
+from docx.shared import Pt
+from docx.oxml.ns import qn
+from docx.oxml import OxmlElement
 
 # 用于处理Excel导出
 def export_to_excel(output_file):
@@ -29,13 +32,27 @@ def export_to_word(output_file):
     # 创建一个新的Word文档
     doc = Document()
 
+    # 预定义表头
+    columns = ["Name", "Teaching Work", "Research Work", "Scientific Research", "Other Work", "Total Performance"]
+
     # 打开data.txt文件并读取内容
     with open('data.txt', 'r', encoding='utf-8') as f:  # 假设data.txt文件在当前目录
         lines = f.readlines()
 
-    # 将txt文件的内容写入Word文档
+    # 创建一个表格，假设数据没有特别复杂的结构
+    table = doc.add_table(rows=1, cols=len(columns))
+
+    # 填充表格的表头
+    hdr_cells = table.rows[0].cells
+    for i, header in enumerate(columns):
+        hdr_cells[i].text = header
+
+    # 填充数据行
     for line in lines:
-        doc.add_paragraph(line.strip())
+        row_cells = table.add_row().cells
+        cells = line.strip().split('\t')  # 按制表符分割每一行
+        for i, cell in enumerate(cells):
+            row_cells[i].text = cell
 
     # 保存到指定的Word文件
     doc.save(output_file)
