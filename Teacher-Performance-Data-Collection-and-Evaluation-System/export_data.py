@@ -1,82 +1,74 @@
 # -*- coding: utf-8 -*-
+
 import sys
 import os
 from openpyxl import Workbook
 from docx import Document
-from docx.shared import Pt
-from docx.oxml.ns import qn
-from docx.oxml import OxmlElement
 
-# ÓÃÓÚ´¦ÀíExcelµ¼³ö
+# å¯¼å‡ºåˆ°Excel
 def export_to_excel(output_file):
-    # ´´½¨Ò»¸öĞÂµÄExcel¹¤×÷²¾ºÍ¹¤×÷±í
     wb = Workbook()
     ws = wb.active
 
-    # ´ò¿ªdata.txtÎÄ¼ş²¢¶ÁÈ¡ÄÚÈİ
-    with open('data.txt', 'r', encoding='utf-8') as f:  # ¼ÙÉèdata.txtÎÄ¼şÔÚµ±Ç°Ä¿Â¼
+    # è¡¨å¤´
+    columns = ["å§“å", "æ•™å­¦å·¥ä½œ", "æ•™ç ”å·¥ä½œ", "ç§‘ç ”å·¥ä½œ", "å…¶ä»–å·¥ä½œ", "æ€»ç»©æ•ˆ"]
+    for col_num, header in enumerate(columns, start=1):
+        ws.cell(row=1, column=col_num, value=header)
+
+    # è¯»å–æ•°æ®æ–‡ä»¶
+    with open('data.txt', 'r', encoding='utf-8') as f:
         lines = f.readlines()
 
-    # ½«txtÎÄ¼şµÄÄÚÈİĞ´ÈëExcel
-    for row_num, line in enumerate(lines, start=1):
-        cells = line.strip().split('\t')  # °´ÖÆ±í·û·Ö¸îÃ¿Ò»ĞĞ
+    # å†™å…¥æ•°æ®
+    for row_num, line in enumerate(lines, start=2):
+        cells = line.strip().split('\t')
         for col_num, cell in enumerate(cells, start=1):
-            ws.cell(row=row_num, column=col_num, value=cell)  # Ğ´Èëµ¥Ôª¸ñ
+            ws.cell(row=row_num, column=col_num, value=cell)
 
-    # ±£´æµ½Ö¸¶¨µÄExcelÎÄ¼ş
     wb.save(output_file)
-    print(f"Excel file saved: {output_file}")
+    print(f"Excel æ–‡ä»¶å·²ä¿å­˜: {output_file}")
 
-# ÓÃÓÚ´¦ÀíWordµ¼³ö
+# å¯¼å‡ºåˆ°Word
 def export_to_word(output_file):
-    # ´´½¨Ò»¸öĞÂµÄWordÎÄµµ
     doc = Document()
+    columns = ["å§“å", "æ•™å­¦å·¥ä½œ", "æ•™ç ”å·¥ä½œ", "ç§‘ç ”å·¥ä½œ", "å…¶ä»–å·¥ä½œ", "æ€»ç»©æ•ˆ"]
 
-    # Ô¤¶¨Òå±íÍ·
-    columns = ["Name", "Teaching Work", "Research Work", "Scientific Research", "Other Work", "Total Performance"]
-
-    # ´ò¿ªdata.txtÎÄ¼ş²¢¶ÁÈ¡ÄÚÈİ
-    with open('data.txt', 'r', encoding='utf-8') as f:  # ¼ÙÉèdata.txtÎÄ¼şÔÚµ±Ç°Ä¿Â¼
+    # è¯»å–æ•°æ®æ–‡ä»¶
+    with open('data.txt', 'r', encoding='utf-8') as f:
         lines = f.readlines()
 
-    # ´´½¨Ò»¸ö±í¸ñ£¬¼ÙÉèÊı¾İÃ»ÓĞÌØ±ğ¸´ÔÓµÄ½á¹¹
+    # åˆ›å»ºè¡¨æ ¼å¹¶å¡«å……è¡¨å¤´
     table = doc.add_table(rows=1, cols=len(columns))
-
-    # Ìî³ä±í¸ñµÄ±íÍ·
     hdr_cells = table.rows[0].cells
     for i, header in enumerate(columns):
         hdr_cells[i].text = header
 
-    # Ìî³äÊı¾İĞĞ
+    # å†™å…¥æ•°æ®
     for line in lines:
         row_cells = table.add_row().cells
-        cells = line.strip().split('\t')  # °´ÖÆ±í·û·Ö¸îÃ¿Ò»ĞĞ
+        cells = line.strip().split('\t')
         for i, cell in enumerate(cells):
             row_cells[i].text = cell
 
-    # ±£´æµ½Ö¸¶¨µÄWordÎÄ¼ş
     doc.save(output_file)
-    print(f"Word file saved: {output_file}")
+    print(f"Word æ–‡ä»¶å·²ä¿å­˜: {output_file}")
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print("Usage: python export_data.py <format> <output_file>")
+        print("ç”¨æ³•: python export_data.py <æ ¼å¼> <è¾“å‡ºæ–‡ä»¶>")
         sys.exit(1)
 
-    # »ñÈ¡ÃüÁîĞĞ²ÎÊı
-    file_format = sys.argv[1].lower()  # 'excel' »ò 'word'
+    file_format = sys.argv[1].lower()
     output_file = sys.argv[2]
 
-    # È·±£txtÎÄ¼ş´æÔÚ
     if not os.path.exists('data.txt'):
-        print(f"Error: The file data.txt does not exist.")
+        print("é”™è¯¯: æ•°æ®æ–‡ä»¶ data.txt ä¸å­˜åœ¨ã€‚")
         sys.exit(1)
 
-    # ¸ù¾İ¸ñÊ½Ñ¡Ôñ´¦Àí·½Ê½
     if file_format == 'excel':
         export_to_excel(output_file)
     elif file_format == 'word':
         export_to_word(output_file)
     else:
-        print("Error: Unsupported format. Please specify 'excel' or 'word'.")
+        print("é”™è¯¯: ä¸æ”¯æŒçš„æ ¼å¼ï¼Œè¯·æŒ‡å®š 'excel' æˆ– 'word'ã€‚")
         sys.exit(1)

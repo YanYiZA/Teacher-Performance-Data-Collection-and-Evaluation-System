@@ -538,80 +538,65 @@ void CTeacherPerformanceDataCollectionandEvaluationSystemDlg::OnBnClickedButtonI
 
 void CTeacherPerformanceDataCollectionandEvaluationSystemDlg::OnBnClickedButtonExportExcel()
 {
-	// 创建 CExport 对象并调用导出函数
-    CExport exportObj(&m_listData);  // 将 CListCtrl 控件传递给 CExport 对象
-    exportObj.ExportDataToFile();  // 导出数据到 data.txt
-
-    // 打开文件选择对话框，让用户选择保存 Excel 文件的路径
-    CFileDialog fileDialog(FALSE, L"excel", L"*.xlsx", OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT,
-        L"Excel Files (*.xlsx)|*.xlsx|All Files (*.*)|*.*||");
-
-    if (fileDialog.DoModal() == IDOK)
-    {
-        // 获取用户选择的路径
-        std::wstring savePath = fileDialog.GetPathName();
-
-        // 调用 Python 脚本生成 Excel 文件
-        std::wstring pythonScriptPath = L"export_data.py";  // 你的 Python 脚本路径
-        std::wstring command = L"python " + pythonScriptPath + L" excel " + savePath;
-
-        // 使用 CreateProcess 调用 Python 脚本
-        STARTUPINFO si = { sizeof(si) };
-        PROCESS_INFORMATION pi;
-        ZeroMemory(&pi, sizeof(pi));
-
-        if (CreateProcess(nullptr, &command[0], nullptr, nullptr, FALSE, 0, nullptr, nullptr, &si, &pi) == 0)
-        {
-            AfxMessageBox(L"Failed to start Python script!");
-        }
-        else
-        {
-            WaitForSingleObject(pi.hProcess, INFINITE);
-            CloseHandle(pi.hProcess);
-            CloseHandle(pi.hThread);
-
-            AfxMessageBox(L"Python script executed successfully!");
-        }
-    }
-}
-
-void CTeacherPerformanceDataCollectionandEvaluationSystemDlg::OnBnClickedButtonExportWord()
-{
-	// 创建 CExport 对象并调用导出函数
 	CExport exportObj(&m_listData);  // 将 CListCtrl 控件传递给 CExport 对象
 	exportObj.ExportDataToFile();  // 导出数据到 data.txt
-
-	// 打开文件选择对话框，让用户选择保存 Word 文件的路径
-	CFileDialog fileDialog(FALSE, L"word", L"*.docx", OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT,
-		L"Word Files (*.docx)|*.docx|All Files (*.*)|*.*||");
+	// 打开文件选择对话框
+	CFileDialog fileDialog(FALSE, L"excel", L"*.xlsx", OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT,
+		L"Excel Files (*.xlsx)|*.xlsx|All Files (*.*)|*.*||");
 
 	if (fileDialog.DoModal() == IDOK)
 	{
-		// 获取用户选择的路径
 		std::wstring savePath = fileDialog.GetPathName();
+		std::wstring pythonScriptPath = L"export_data.py";  // Python 脚本路径
+		std::wstring command = L"python " + pythonScriptPath + L" excel " + savePath;
 
-		// 调用 Python 脚本生成 Word 文件
-		std::wstring pythonScriptPath = L"export_data.py";  // 你的 Python 脚本路径
-		std::wstring command = L"python " + pythonScriptPath + L" word " + savePath;
-
-		// 使用 CreateProcess 调用 Python 脚本
 		STARTUPINFO si = { sizeof(si) };
 		PROCESS_INFORMATION pi;
 		ZeroMemory(&pi, sizeof(pi));
 
 		if (CreateProcess(nullptr, &command[0], nullptr, nullptr, FALSE, 0, nullptr, nullptr, &si, &pi) == 0)
 		{
-			AfxMessageBox(L"Failed to start Python script!");
+			AfxMessageBox(L"启动 Python 脚本失败！");
 		}
 		else
 		{
 			WaitForSingleObject(pi.hProcess, INFINITE);
 			CloseHandle(pi.hProcess);
 			CloseHandle(pi.hThread);
-
-			AfxMessageBox(L"Python script executed successfully!");
 		}
 	}
 }
+
+void CTeacherPerformanceDataCollectionandEvaluationSystemDlg::OnBnClickedButtonExportWord()
+{
+	CExport exportObj(&m_listData);  // 将 CListCtrl 控件传递给 CExport 对象
+	exportObj.ExportDataToFile();  // 导出数据到 data.txt
+	// 打开文件选择对话框
+	CFileDialog fileDialog(FALSE, L"word", L"*.docx", OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_OVERWRITEPROMPT,
+		L"Word Files (*.docx)|*.docx|All Files (*.*)|*.*||");
+
+	if (fileDialog.DoModal() == IDOK)
+	{
+		std::wstring savePath = fileDialog.GetPathName();
+		std::wstring pythonScriptPath = L"export_data.py";  // Python 脚本路径
+		std::wstring command = L"python " + pythonScriptPath + L" word " + savePath;
+
+		STARTUPINFO si = { sizeof(si) };
+		PROCESS_INFORMATION pi;
+		ZeroMemory(&pi, sizeof(pi));
+
+		if (CreateProcess(nullptr, &command[0], nullptr, nullptr, FALSE, 0, nullptr, nullptr, &si, &pi) == 0)
+		{
+			AfxMessageBox(L"启动 Python 脚本失败！");
+		}
+		else
+		{
+			WaitForSingleObject(pi.hProcess, INFINITE);
+			CloseHandle(pi.hProcess);
+			CloseHandle(pi.hThread);
+		}
+	}
+}
+
 
 
