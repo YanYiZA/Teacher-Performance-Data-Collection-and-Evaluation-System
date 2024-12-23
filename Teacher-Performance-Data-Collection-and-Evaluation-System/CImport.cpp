@@ -31,10 +31,8 @@ CImport::~CImport()
 void CImport::ImportDocxFiles(const std::vector<std::wstring>& filePaths)
 {
     try {
-        // 开始处理函数
         for (const auto& filePath : filePaths)
         {
-            // 使用 pythonw 来运行脚本，这样可以避免弹出命令行窗口
             std::wstring command = L"python parse_docx.pyw \"" + filePath + L"\"";
 
             // 创建进程
@@ -66,17 +64,16 @@ void CImport::ImportDocxFiles(const std::vector<std::wstring>& filePaths)
             }
 
             // 解析返回的数据并填充到列表中
-            std::wstring line;
             std::wstringstream ss(wideResult);
             std::wstring name;
             int teachingWork = 0, researchWork = 0, scientificWork = 0, otherWork = 0;
+            std::wstring line;
 
             while (std::getline(ss, line))
             {
                 std::wstringstream lineStream(line);
                 std::wstring currentName, workType, performance;
 
-                // 用逗号拆分数据
                 std::getline(lineStream, currentName, L',');
                 std::getline(lineStream, workType, L',');
                 std::getline(lineStream, performance, L',');
@@ -87,49 +84,25 @@ void CImport::ImportDocxFiles(const std::vector<std::wstring>& filePaths)
                 }
 
                 // 根据工作类型对绩效进行汇总
+                double performanceValue = 0.0;
+                try {
+                    performanceValue = std::stod(performance);
+                }
+                catch (...) {
+                    performanceValue = 0.0; // 如果转换失败，将绩效设置为 0
+                }
+
                 if (workType == L"教学工作") {
-                    try {
-                        teachingWork += std::stod(performance);
-                    }
-                    catch (const std::invalid_argument&) {
-                        teachingWork += 0; // 如果转换失败，将绩效设置为 0
-                    }
-                    catch (const std::out_of_range&) {
-                        teachingWork += 0; // 如果转换失败，将绩效设置为 0
-                    }
+                    teachingWork += performanceValue;
                 }
                 else if (workType == L"教研工作") {
-                    try {
-                        researchWork += std::stod(performance);
-                    }
-                    catch (const std::invalid_argument&) {
-                        researchWork += 0;
-                    }
-                    catch (const std::out_of_range&) {
-                        researchWork += 0;
-                    }
+                    researchWork += performanceValue;
                 }
                 else if (workType == L"科研工作") {
-                    try {
-                        scientificWork += std::stod(performance);
-                    }
-                    catch (const std::invalid_argument&) {
-                        scientificWork += 0;
-                    }
-                    catch (const std::out_of_range&) {
-                        scientificWork += 0;
-                    }
+                    scientificWork += performanceValue;
                 }
                 else if (workType == L"其它工作") {
-                    try {
-                        otherWork += std::stod(performance);
-                    }
-                    catch (const std::invalid_argument&) {
-                        otherWork += 0;
-                    }
-                    catch (const std::out_of_range&) {
-                        otherWork += 0;
-                    }
+                    otherWork += performanceValue;
                 }
             }
 
@@ -146,6 +119,7 @@ void CImport::ImportDocxFiles(const std::vector<std::wstring>& filePaths)
         AfxMessageBox(L"发生了一个未知的错误！");
     }
 }
+
 
 
 
