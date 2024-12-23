@@ -7,7 +7,7 @@ def parse_docx(docx_path):
     data = []
     for table in doc.tables:
         for row_index, row in enumerate(table.rows):
-            # 跳过第一行（标题行）
+            # 璺宠繃绗竴琛岋紙鏍囬琛岋級
             if row_index == 0:
                 continue
             cells = [cell.text.strip() for cell in row.cells]
