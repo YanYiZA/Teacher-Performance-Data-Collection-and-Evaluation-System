@@ -18,8 +18,6 @@ public:
     void ImportDocxFiles(const std::vector<std::wstring>& filePaths);
     // 向 ListCtrl 中添加数据
     void AddDataToList(const std::wstring& name, int teachingWork, int researchWork, int scientificWork, int otherWork);
-    // 向数据列表添加新数据
-    void AddPerformanceData(const TeacherPerformance& data);
 
 private:
     // ListCtrl 控件的指针，保存导入数据

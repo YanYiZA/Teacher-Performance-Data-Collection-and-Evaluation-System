@@ -72,14 +72,15 @@ private:
 	
 
 public:
-	afx_msg void OnBnClickedButtonDelete();
-	afx_msg void OnBnClickedButtonUpdate();
 	CEdit m_editName;
 	CEdit m_editTeaching;
 	CEdit m_editTeach;
+	CEdit m_queryName;
+
+	afx_msg void OnBnClickedButtonDelete();
+	afx_msg void OnBnClickedButtonUpdate();
 	afx_msg void OnBnClickedButtonTotal();
 	afx_msg void OnBnClickedButtonSearch();
-	CEdit m_queryName;
 	afx_msg void OnBnClickedButtonImport();
 	afx_msg void OnBnClickedButtonExportExcel();
 	afx_msg void OnBnClickedButtonExportWord();

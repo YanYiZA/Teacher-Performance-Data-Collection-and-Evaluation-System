@@ -154,7 +154,7 @@ void CImport::AddDataToList(const std::wstring& name, int teachingWork, int rese
 {
     int index = m_pListCtrl->InsertItem(0, CString(name.c_str()));
 
-    // 格式化为两位小数，并添加到控件中
+
     auto formatDouble = [](double value) -> CString {
         // 将 double 转为字符串并保留两位小数
         std::wostringstream oss;
@@ -171,7 +171,6 @@ void CImport::AddDataToList(const std::wstring& name, int teachingWork, int rese
     // 计算总绩效，并添加
     double totalPerformance = teachingWork + researchWork + scientificWork + otherWork;
     m_pListCtrl->SetItemText(index, 5, formatDouble(totalPerformance));
-    // 计算排名
     m_pListCtrl->SetItemText(index, 6, L"");
 
     // 将数据添加到m_dataList
@@ -183,14 +182,8 @@ void CImport::AddDataToList(const std::wstring& name, int teachingWork, int rese
     data.otherPerformance = otherWork;
     data.totalPerformance = totalPerformance;
     data.rank = 0;  // 排名初始化为0
-    //m_pListCtrl->SetItemData(index, (DWORD_PTR)(&m_dataList.back()));  // 设置索引和数据项的关联
 
     // 添加到m_dataList
     m_dataList.push_back(data);
 
-}
-
-void CImport::AddPerformanceData(const TeacherPerformance& data)
-{
-    m_dataList.push_back(data);
 }
